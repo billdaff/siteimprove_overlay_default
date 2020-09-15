@@ -16,6 +16,11 @@ class EntityFormAlter {
     // Get friendly url of node and include all Siteimprove js scripts.
     /** @var \Drupal\Core\Entity\Entity $entity */
     $entity = $form_state->getFormObject()->getEntity();
+
+    if (!$entity->hasLinkTemplate('canonical')) {
+      return $element;
+    }
+
     $url_relative = $entity->toUrl('canonical', ['absolute' => FALSE])->toString();
     $urls = [];
 

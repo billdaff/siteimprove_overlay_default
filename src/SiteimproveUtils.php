@@ -166,6 +166,10 @@ class SiteimproveUtils {
    * @throws \Drupal\Core\Entity\EntityMalformedException
    */
   public function getEntityUrls($entity) {
+    if (!$entity->hasLinkTemplate('canonical')) {
+      return [];
+    }
+
     /** @var \Drupal\Core\Entity\Entity $entity */
     $url_relative = $entity->toUrl('canonical', ['absolute' => FALSE])->toString();
     $urls = [];
