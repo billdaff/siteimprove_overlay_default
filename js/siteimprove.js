@@ -29,10 +29,11 @@
       this.common();
     },
     common: function () {
+      var _this = this;
       var _si = window._si || [];
       if (Array.isArray(this.url)) {
-        this.url.forEach((url) => {
-          _si.push([this.method, url, drupalSettings.siteimprove.token]);
+        this.url.forEach(function (url) {
+          _si.push([_this.method, url, drupalSettings.siteimprove.token]);
         });
       }
       else {
