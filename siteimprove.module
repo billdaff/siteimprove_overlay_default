@@ -107,12 +107,14 @@ function siteimprove_page_attachments(array &$attachments) {
       $parameters = \Drupal::routeMatch()->getParameters();
       foreach ($parameters as $param) {
         if (is_object($param) && $param instanceof \Drupal\Core\Entity\ContentEntityInterface) {
-          /** @var \Drupal\Core\Entity\ContentEntityType $type */
-          $entity_type = $param->getEntityType()->id();
-          $id = $param->id();
-          $entity = \drupal::entityTypeManager()->getStorage($entity_type)->load($id);
-          $urls = \drupal::service('siteimprove.utils')->getEntityUrls($entity);
-          $attachments['#attached']['drupalSettings']['siteimprove'][$method] = $siteimprove->getsiteimprovesettings($urls, $method);
+          if ($param->in_preview !== TRUE) {
+            /** @var \Drupal\Core\Entity\ContentEntityType $type */
+            $entity_type = $param->getEntityType()->id();
+            $id = $param->id();
+            $entity = \drupal::entityTypeManager()->getStorage($entity_type)->load($id);
+            $urls = \drupal::service('siteimprove.utils')->getEntityUrls($entity);
+            $attachments['#attached']['drupalSettings']['siteimprove'][$method] = $siteimprove->getsiteimprovesettings($urls, $method);
+          }
         }
       }
     }
