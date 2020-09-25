@@ -189,7 +189,7 @@ class SiteimproveUtils {
     }
 
     if (empty($urls)) {
-      return $entity->toUrl('canonical', ['absolute' => TRUE])->toString();
+      return [$entity->toUrl('canonical', ['absolute' => TRUE])->toString()];
     }
     else {
       return $urls;
