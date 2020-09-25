@@ -7,4 +7,9 @@ siteimprove.overlay:
   license:
     name: GPL-2.0+
   js:
-    https://cdn.siteimprove.net/cms/overlay.js: { type: external, minified: true }
+    https://cdn.siteimprove.net/cms/overlay.js:
+      type: external
+      attributes:
+        integrity: 'sha256-Lm04HWQmUzZk+Z+OO6d7W35jfGcZu+4JcEK91gjIycI= sha384-l5o/6/PWku9CWfizPrywNFQUohhAeuavwgshoBVhJe6myxckijE25U4SKs936Das sha512-8I1ZEbNGeQQKVkTUav5vYcBtDUlK0A1lCzPFxYscOobVvj+m7eDVj/he/c8BZd8RTgpkHzsf/awM8+9ZYNGGiw=='
+        crossorigin: anonymous
+        minified: true
