@@ -14,7 +14,6 @@ use Drupal\Component\Annotation\Plugin;
  */
 class SiteimproveDomain extends Plugin {
 
-
   /**
    * The plugin ID.
    *
@@ -39,4 +38,5 @@ class SiteimproveDomain extends Plugin {
    * @ingroup plugin_translatable
    */
   public $description;
+
 }

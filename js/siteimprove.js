@@ -52,7 +52,6 @@
     }
   };
 
-
   Drupal.behaviors.siteimprove = {
     attach: function (context, settings) {
 

@@ -2,6 +2,7 @@
 
 namespace Drupal\siteimprove\Plugin\SiteimproveDomain;
 
+use Drupal\Core\Entity\EntityBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\siteimprove\Plugin\SiteimproveDomainBase;
 
@@ -18,6 +19,9 @@ use Drupal\siteimprove\Plugin\SiteimproveDomainBase;
  */
 class Single extends SiteimproveDomainBase {
 
+  /**
+   * {@inheritdoc}
+   */
   public function buildForm(array &$form, FormStateInterface &$form_state, $plugin_definition) {
     parent::buildForm($form, $form_state, $plugin_definition);
 
@@ -52,17 +56,9 @@ class Single extends SiteimproveDomainBase {
   }
 
   /**
-   * Return frontend domain name.
-   *
-   * If http/https isn't specified in domain name, use the backend's scheme.
-   *
-   * @param \Drupal\Core\Entity\EntityBase $entity
-   *   We don't use the entity in this plugin.
-   *
-   * @return array
-   *   Array of urls.
+   * {@inheritdoc}
    */
-  public function getUrls($entity) {
+  public function getUrls(EntityBase $entity) {
     $config = $this->config('siteimprove.domain.single.settings');
     $domain = $config->get('domain');
     $scheme = preg_match('/^https?:\/\//', $domain) ? '' : \Drupal::request()->getScheme() . '://';

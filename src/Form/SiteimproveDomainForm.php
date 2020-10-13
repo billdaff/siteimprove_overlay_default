@@ -7,7 +7,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class SiteimproveDomainForm.
+ * Form for setting up which Siteimprove Domain plugin to use.
  */
 class SiteimproveDomainForm extends FormBase {
 
@@ -47,7 +47,6 @@ class SiteimproveDomainForm extends FormBase {
       '#type' => 'select',
       '#title' => $this->t('Siteimprove Domain Plugins'),
       '#description' => $this->t('Choose which Siteimprove Domain plugin to use'),
-//      '#options' => ['1' => $this->t('1'), '2' => $this->t('2'), '3' => 4],
       '#options' => $options,
       '#size' => 1,
       '#default_value' => '1',
@@ -75,10 +74,6 @@ class SiteimproveDomainForm extends FormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    // Display result.
-    foreach ($form_state->getValues() as $key => $value) {
-      \Drupal::messenger()->addMessage($key . ': ' . ($key === 'text_format'?$value['value']:$value));
-    }
   }
 
 }

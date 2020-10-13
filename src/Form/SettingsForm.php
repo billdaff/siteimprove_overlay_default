@@ -10,7 +10,7 @@ use Drupal\siteimprove\SiteimproveUtils;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class SettingsForm.
+ * Siteimprove settings.
  *
  * @package Drupal\siteimprove\Form
  */

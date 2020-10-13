@@ -9,7 +9,7 @@ use GuzzleHttp\Client;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class SiteimproveUtils.
+ * Utility functions for Siteimprove.
  */
 class SiteimproveUtils {
 
@@ -120,7 +120,7 @@ class SiteimproveUtils {
    * @return array
    *   JS settings.
    */
-  public function getSiteimproveSettings($url, $type, $auto = TRUE) {
+  public function getSiteimproveSettings(array $url, $type, $auto = TRUE) {
     return [
       'url' => $url,
       'auto' => $auto,
@@ -160,9 +160,12 @@ class SiteimproveUtils {
   /**
    * Return frontend urls for given entity.
    *
-   * @param $entity
+   * @param \Drupal\Core\Entity\EntityInterface|null $entity
+   *   Entity to get frontend urls for.
    *
    * @return array|\Drupal\Core\GeneratedUrl|string
+   *   Returns an array of frontend urls for entity.
+   *
    * @throws \Drupal\Core\Entity\EntityMalformedException
    */
   public function getEntityUrls($entity) {

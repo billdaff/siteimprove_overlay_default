@@ -11,7 +11,6 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
  */
 class SiteimproveDomainManager extends DefaultPluginManager {
 
-
   /**
    * Constructs a new SiteimproveDomainManager object.
    *

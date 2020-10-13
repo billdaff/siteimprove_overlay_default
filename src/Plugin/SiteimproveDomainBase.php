@@ -3,9 +3,7 @@
 namespace Drupal\siteimprove\Plugin;
 
 use Drupal\Component\Plugin\PluginBase;
-use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\ConfigFormBaseTrait;
-use Drupal\Core\Form\FormBuilder;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Psr\Container\ContainerInterface;
@@ -30,14 +28,31 @@ abstract class SiteimproveDomainBase extends PluginBase implements SiteimproveDo
    */
   protected $configFactory;
 
-  /** @var \Drupal\Core\Form\FormBuilder */
+  /**
+   * The form builder.
+   *
+   * @var \Drupal\Core\Form\FormBuilder
+   */
   protected $formBuilder;
 
-  public function __construct(array $configuration, $plugin_id, $plugin_definition) {
+  /**
+   * Constructs a new SiteimproveDomainBase object.
+   *
+   * @param array $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin_id for the plugin instance.
+   * @param array $plugin_definition
+   *   The plugin implementation definition.
+   */
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->configFactory = \Drupal::getContainer()->get('config.factory');
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     return new static(
       $configuration,
@@ -46,6 +61,9 @@ abstract class SiteimproveDomainBase extends PluginBase implements SiteimproveDo
     );
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function getName() {
     return $this->pluginDefinition['name'];
   }
@@ -75,9 +93,13 @@ abstract class SiteimproveDomainBase extends PluginBase implements SiteimproveDo
   /**
    * Return urls for active domains for this entity.
    *
+   * If http/https isn't specified in domain name, use the backend's scheme.
+   *
    * @param \Drupal\Core\Entity\EntityBase $entity
+   *   Entity to get active domain names for.
    *
    * @return array
+   *   Array of domain names without trailing slash.
    */
   public function getUrls(EntityBase $entity) {
     return [];
@@ -89,6 +111,5 @@ abstract class SiteimproveDomainBase extends PluginBase implements SiteimproveDo
   protected function getEditableConfigNames() {
     return [];
   }
-
 
 }
