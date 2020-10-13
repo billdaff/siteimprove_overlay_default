@@ -5,6 +5,7 @@ namespace Drupal\siteimprove;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\Core\Url;
 use GuzzleHttp\Client;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -140,7 +141,7 @@ class SiteimproveUtils {
   /**
    * Save URL in session.
    *
-   * @param object $entity
+   * @param \Drupal\Core\Entity\EntityInterface|null $entity
    *   Node or taxonomy term entity object.
    *
    * @throws \Drupal\Core\Entity\EntityMalformedException
@@ -172,10 +173,54 @@ class SiteimproveUtils {
     if (!$entity->hasLinkTemplate('canonical')) {
       return [];
     }
+
+    $domains = $this->getEntityDomains($entity);
+
     /** @var \Drupal\Core\Entity\Entity $entity */
     $url_relative = $entity->toUrl('canonical', ['absolute' => FALSE])->toString();
     $urls = [];
 
+    // Create urls for active frontend urls for the entity.
+    foreach ($domains as $domain) {
+      $urls[] = $domain . $url_relative;
+    }
+
+    $frontpage = $this->configFactory->get('system.site')->get('page.front');
+    $current_route_name = \Drupal::routeMatch()->getRouteName();
+    $node_route = in_array($current_route_name, [
+      'entity.node.edit_form',
+      'entity.node.latest_version',
+    ]);
+    $taxonomy_route = in_array($current_route_name, [
+      'entity.taxonomy_term.edit_form',
+      'entity.taxonomy_term.latest_version',
+    ]);
+
+    // If entity is frontpage, add base url to domains.
+    if (\Drupal::service('path.matcher')->isFrontPage()
+      || ($node_route && '/node/' . $entity->id() === $frontpage)
+      || ($taxonomy_route && '/taxonomy/term/' . $entity->id() === $frontpage)
+    ) {
+      $front = Url::fromRoute('<front>')->toString();
+      foreach ($domains as $domain) {
+        $urls[] = $domain . $front;
+      }
+    }
+
+    return $urls;
+
+  }
+
+  /**
+   * Get active domain names for entity.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface|null $entity
+   *   Entity to get domain names for.
+   *
+   * @return array
+   *   Array of domain names without trailing slash.
+   */
+  public function getEntityDomains($entity) {
     // Get the active frontend domain plugin.
     $config = \Drupal::service('config.factory')->get('siteimprove.settings');
     $plugin_manager = \Drupal::getContainer()->get('plugin.manager.siteimprove_domain');
@@ -184,20 +229,7 @@ class SiteimproveUtils {
     $plugin = $plugin_manager->createInstance($plugin_id);
 
     // Get active domains.
-    $domains = $plugin->getUrls($entity);
-
-    // Create urls for active frontend urls for the entity.
-    foreach ($domains as $domain) {
-      $urls[] = $domain . $url_relative;
-    }
-
-    if (empty($urls)) {
-      return [$entity->toUrl('canonical', ['absolute' => TRUE])->toString()];
-    }
-    else {
-      return $urls;
-    }
-
+    return $plugin->getUrls($entity);
   }
 
 }
