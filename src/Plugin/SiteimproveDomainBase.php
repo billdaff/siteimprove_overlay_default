@@ -5,14 +5,16 @@ namespace Drupal\siteimprove\Plugin;
 use Drupal\Component\Plugin\PluginBase;
 use Drupal\Core\Form\ConfigFormBaseTrait;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-use Psr\Container\ContainerInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Entity\EntityBase;
 
 /**
  * Base class for Siteimprove domain plugins.
  */
-abstract class SiteimproveDomainBase extends PluginBase implements SiteimproveDomainInterface {
+abstract class SiteimproveDomainBase extends PluginBase implements ContainerFactoryPluginInterface, SiteimproveDomainInterface {
   use StringTranslationTrait;
   use ConfigFormBaseTrait;
 
@@ -29,13 +31,6 @@ abstract class SiteimproveDomainBase extends PluginBase implements SiteimproveDo
   protected $configFactory;
 
   /**
-   * The form builder.
-   *
-   * @var \Drupal\Core\Form\FormBuilder
-   */
-  protected $formBuilder;
-
-  /**
    * Constructs a new SiteimproveDomainBase object.
    *
    * @param array $configuration
@@ -44,10 +39,12 @@ abstract class SiteimproveDomainBase extends PluginBase implements SiteimproveDo
    *   The plugin_id for the plugin instance.
    * @param array $plugin_definition
    *   The plugin implementation definition.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
+   *   The config factory.
    */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition) {
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, ConfigFactoryInterface $configFactory) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
-    $this->configFactory = \Drupal::getContainer()->get('config.factory');
+    $this->configFactory = $configFactory;
   }
 
   /**
@@ -57,7 +54,8 @@ abstract class SiteimproveDomainBase extends PluginBase implements SiteimproveDo
     return new static(
       $configuration,
       $plugin_id,
-      $plugin_definition
+      $plugin_definition,
+      $container->get('config.factory')
     );
   }
 
