@@ -1,7 +1,7 @@
 name: Siteimprove Plugin
 type: module
-description: Siteimprove allows users to continuously test, fix and optimize their work through actionable content and analytics insights.
+description: 'Siteimprove allows users to continuously test, fix and optimize their work through actionable content and analytics insights.'
 core: 8.x
 core_version_requirement: ^8 || ^9
-package: Statistics
+package: Siteimprove
 configure: siteimprove.settings_form

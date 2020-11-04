@@ -1,5 +1,6 @@
 administer siteimprove:
   title: 'Administer Siteimprove Plugin'
-  description: 'Configure Siteimprove Plugin token.'
+  description: 'Configure the Siteimprove plugin.'
 use siteimprove:
   title: 'Access Siteimprove Plugin'
+  description: 'Access and use tthe Siteimprove Plugin, overlay and its features.'

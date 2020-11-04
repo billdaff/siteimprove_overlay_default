@@ -1,8 +1,10 @@
-name: 'siteimprove_domain_access'
+name: Siteimprove Domain Access
 type: module
-description: 'Siteimprove Domain Access support'
+description: 'Add Domain Access support in the Siteimprove Plugin. Currently support using domains from Domain Access as Siteimprove frontend domains.'
 core: 8.x
 core_version_requirement: ^8 || ^9
-package: 'siteimprove'
+package: Siteimprove
+configure: siteimprove.settings_form
 dependencies:
-  - siteimprove
+  - siteimprove:siteimprove
+  - domain:domain_access

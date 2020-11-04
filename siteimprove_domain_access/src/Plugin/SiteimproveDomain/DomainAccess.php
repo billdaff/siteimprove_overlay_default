@@ -12,21 +12,18 @@ use Drupal\siteimprove\Plugin\SiteimproveDomainInterface;
  *
  * @SiteimproveDomain(
  *   id = "siteimprovedomain_domain_access",
- *   label = @Translation("Domain access support"),
- *   description = @Translation("Don't set anything and use Drupal's default settings"),
+ *   label = @Translation("Domain Access support"),
+ *   description = @Translation("Automatically use the domains configured in Domain Access as Siteimprove frontend domains."),
  * )
  */
 class DomainAccess extends SiteimproveDomainBase implements SiteimproveDomainInterface {
 
-  /**
-   * {@inheritdoc}
-   */
   public function buildForm(array &$form, FormStateInterface &$form_state, $plugin_definition) {
     parent::buildForm($form, $form_state, $plugin_definition);
 
     $form[$plugin_definition['id']]['description'] = [
       '#type' => 'markup',
-      '#markup' => $this->t("This plugin doesn't contain any settings. Domain names are handled automatically."),
+      '#markup' => $this->t("This plugin doesn't contain any settings. Domain names are automatically fetched from Domain Access."),
     ];
 
     return $form;

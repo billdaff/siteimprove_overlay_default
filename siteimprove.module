@@ -11,6 +11,26 @@
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function siteimprove_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the siteimprove module.
+    case 'help.page.siteimprove':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Siteimprove Plugins – Your Insights Always Within Reach!') . '</p>';
+      $output .= '<p>' . t('The Siteimprove plugin bridges the gap between Drupal and the Siteimprove Intelligence Platform.') . '</p>';
+      $output .= '<p>' . t('Thanks to the seamless integration, you are now able to put your Siteimprove results to use where they are most valuable – during your content creation and editing process.') . '</p>';
+      $output .= '<p><a href="https://www.drupal.org/docs/contributed-modules/siteimprove" target="_blank" title="Siteimprove module documentation guide on Drupal.org">' . t('Find more help in the documentation guide on drupal.org') . '.</a></p>';
+      return $output;
+
+    default:
+  }
+}
 
 /**
  * Implements hook_form_alter().
