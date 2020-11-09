@@ -141,7 +141,7 @@ function siteimprove_page_attachments(array &$attachments) {
 
     // If siteimprove_url exists in SESSION, send to Siteimprove.
     if (!empty($_SESSION['siteimprove_url'])) {
-      $urls   = $_SESSION['siteimprove_url'];
+      $urls = $_SESSION['siteimprove_url'];
       $method = 'recheck';
       $attachments['#attached']['drupalSettings']['siteimprove'][$method] = $siteimprove->getSiteimproveSettings($urls, $method);
       unset($_SESSION['siteimprove_url']);

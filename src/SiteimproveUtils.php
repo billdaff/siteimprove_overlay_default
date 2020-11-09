@@ -16,7 +16,7 @@ class SiteimproveUtils {
 
   use StringTranslationTrait;
 
-  const TOKEN_REQUEST_URL = 'https://my2.siteimprove.com/auth/token?cms=nameAndVersionofCMSPlugin';
+  const TOKEN_REQUEST_URL = 'https://my2.siteimprove.com/auth/token?cms=Drupal-' . \Drupal::VERSION;
 
   /**
    * Current user var.
