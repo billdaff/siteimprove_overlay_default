@@ -3,13 +3,13 @@
 namespace Drupal\siteimprove\Plugin;
 
 use Drupal\Component\Plugin\PluginBase;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\ConfigFormBaseTrait;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Core\Entity\EntityBase;
 
 /**
  * Base class for Siteimprove domain plugins.
@@ -79,27 +79,25 @@ abstract class SiteimproveDomainBase extends PluginBase implements ContainerFact
   /**
    * {@inheritdoc}
    */
-  public function validateForm(array &$form, FormStateInterface $form_state) {
-  }
+  public function validateForm(array &$form, FormStateInterface $form_state) {}
 
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
-  }
+  public function submitForm(array &$form, FormStateInterface $form_state) {}
 
   /**
    * Return urls for active domains for this entity.
    *
    * If http/https isn't specified in domain name, use the backend's scheme.
    *
-   * @param \Drupal\Core\Entity\EntityBase $entity
+   * @param \Drupal\Core\Entity\EntityInterface $entity
    *   Entity to get active domain names for.
    *
    * @return array
    *   Array of domain names without trailing slash.
    */
-  public function getUrls(EntityBase $entity) {
+  public function getUrls(EntityInterface $entity) {
     return [];
   }
 

@@ -1,8 +1,6 @@
 # Siteimprove Plugin
 
-
 ## Introduction
-
 The Siteimprove plugin bridges the gap between Drupal and the Siteimprove
 Intelligence Platform. You are now able to put your Siteimprove results to use
 where they are most valuable – during your content creationand editing
@@ -12,9 +10,7 @@ have been assessed, you can directly re-recheck the relevant page and see if
 further actions are needed. Delivering a superior digital experience has never
 been more efficient and convenient.
 
-
 ## Installation and configuration
-
 Siteimprove Plugin can be installed like any other Drupal module.
 Place it in the modules directory for your site and enable it
 on the `admin/modules` page.
@@ -22,9 +18,7 @@ on the `admin/modules` page.
 Visit the Siteimprove Plugin settings page and regenerate auth token
 if you need it.
 
-
 ## Frontend Domain Plugin ##
-
 If a Drupal site has a domain for the frontend site that is different from the
 backend domain, this can be configured with existing plugins, or you can make
 your own.
@@ -39,7 +33,6 @@ enable it and it will make sure Siteimprove is notified with the correct
 url(s) for a given entity.
 
 ### Adding your own plugin ###
-
 Use the annotation discovery method with the annotation `@SiteimproveDomain`.
 This annotation has the variables `id`, `label` (translatable), and
 `description` (translatable). See the plugin Simple
@@ -63,15 +56,16 @@ plugin's configuration), `getEditableConfigNames()` (returns a list of setting
 names).
 
 ## Frequently Asked Questions
-
 Who can use this plugin?
 The plugin requires a Siteimprove subscription to be used.
 Signup for a [FreeTrial](https://siteimprove.com/account/create "Free trial")
 to test it out.
 
 Where can I see the overlay?
-The overlay is visible when editing a page.
+The overlay is visible when editing a page, viewing a page and on latest
+revision when content moderation is enabled and configured.
 
 I don't see the overlay, whats wrong?
-Did you remember to turn off your adblocker? Some adblockers does not like
+- Did you grant your users permissions to access the siteimprove plugin?
+- Did you remember to turn off your adblocker? Some adblockers does not like
 our iframe overlay.

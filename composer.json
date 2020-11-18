@@ -8,7 +8,6 @@
   "minimum-stability": "dev",
   "support": {
     "issues": "https://www.drupal.org/project/issues/siteimprove",
-    "source": "http://cgit.drupalcode.org/siteimprove"
-  },
-  "require": { }
+    "source": "https://git.drupalcode.org/project/siteimprove"
+  }
 }

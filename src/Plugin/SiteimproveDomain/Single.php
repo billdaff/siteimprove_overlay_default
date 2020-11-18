@@ -2,9 +2,12 @@
 
 namespace Drupal\siteimprove\Plugin\SiteimproveDomain;
 
-use Drupal\Core\Entity\EntityBase;
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\siteimprove\Plugin\SiteimproveDomainBase;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Provides simple plugin instance of Siteimprove Domain settings.
@@ -18,6 +21,34 @@ use Drupal\siteimprove\Plugin\SiteimproveDomainBase;
  * )
  */
 class Single extends SiteimproveDomainBase {
+
+  /**
+   * Current request service.
+   *
+   * @var \Symfony\Component\HttpFoundation\Request
+   */
+  protected $request;
+
+  /**
+   * {@inheritDoc}
+   */
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, ConfigFactoryInterface $configFactory, Request $request) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $configFactory);
+    $this->request = $request;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('config.factory'),
+      $container->get('request_stack')->getCurrentRequest()
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -51,17 +82,16 @@ class Single extends SiteimproveDomainBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $config = $this->config('siteimprove.domain.single.settings');
-    $config->set('domain', $form_state->getValue('single_domain'))
-      ->save();
+    $config->set('domain', $form_state->getValue('single_domain'))->save();
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getUrls(EntityBase $entity) {
+  public function getUrls(EntityInterface $entity) {
     $config = $this->config('siteimprove.domain.single.settings');
     $domain = $config->get('domain');
-    $scheme = preg_match('/^https?:\/\//', $domain) ? '' : \Drupal::request()->getScheme() . '://';
+    $scheme = preg_match('/^https?:\/\//', $domain) ? '' : $this->request->getScheme() . '://';
     return [$scheme . $domain];
   }
 

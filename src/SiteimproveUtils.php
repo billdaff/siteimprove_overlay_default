@@ -2,12 +2,19 @@
 
 namespace Drupal\siteimprove;
 
+use Drupal\Component\Serialization\Json;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Logger\LoggerChannelFactoryInterface;
+use Drupal\Core\Logger\RfcLogLevel;
+use Drupal\Core\Path\PathMatcherInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Url;
+use Drupal\Core\Utility\Error;
+use Drupal\siteimprove\Plugin\SiteimproveDomainManager;
 use GuzzleHttp\Client;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Utility functions for Siteimprove.
@@ -19,14 +26,14 @@ class SiteimproveUtils {
   const TOKEN_REQUEST_URL = 'https://my2.siteimprove.com/auth/token?cms=Drupal-' . \Drupal::VERSION;
 
   /**
-   * Current user var.
+   * Current user service.
    *
    * @var \Drupal\Core\Session\AccountInterface
    */
   protected $currentUser;
 
   /**
-   * ConfigFactory var.
+   * Drupal Configuration storage service.
    *
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
@@ -40,24 +47,60 @@ class SiteimproveUtils {
   protected $httpClient;
 
   /**
-   * {@inheritdoc}
+   * Drupal RouteMatch service.
+   *
+   * @var \Drupal\Core\Routing\RouteMatchInterface
    */
-  public function __construct(ConfigFactoryInterface $config_factory, AccountInterface $current_user, Client $http_client) {
+  protected $routeMatch;
+
+  /**
+   * Drupal PatchMatcher service.
+   *
+   * @var \Drupal\Core\Path\PathMatcherInterface
+   */
+  protected $pathMatcher;
+
+  /**
+   * Siteimprove Domain Manager.
+   *
+   * @var \Drupal\siteimprove\Plugin\SiteimproveDomainManager
+   */
+  protected $siteimproveDomainManager;
+
+  /**
+   * Drupal logging service.
+   *
+   * Using the 'Siteimprove' channel.
+   *
+   * @var \Drupal\Core\Logger\LoggerChannelInterface
+   */
+  protected $logger;
+
+  /**
+   * SiteimproveUtils constructor.
+   *
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   Drupal Configuration storage service.
+   * @param \Drupal\Core\Session\AccountInterface $current_user
+   *   Current user service.
+   * @param \GuzzleHttp\Client $http_client
+   *   HTTP Client.
+   * @param \Drupal\Core\Routing\RouteMatchInterface $routeMatch
+   *   Drupal RouteMatch service.
+   * @param \Drupal\Core\Path\PathMatcherInterface $pathMatcher
+   *   Drupal PatchMatcher service.
+   * @param \Drupal\siteimprove\Plugin\SiteimproveDomainManager $siteimproveDomainManager
+   *   Siteimprove Domain Manager.
+   * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $loggerChannelFactory
+   */
+  public function __construct(ConfigFactoryInterface $config_factory, AccountInterface $current_user, Client $http_client, RouteMatchInterface $routeMatch, PathMatcherInterface $pathMatcher, SiteimproveDomainManager $siteimproveDomainManager, LoggerChannelFactoryInterface $loggerChannelFactory) {
     $this->configFactory = $config_factory;
     $this->currentUser = $current_user;
     $this->httpClient = $http_client;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function create(ContainerInterface $container) {
-    // Instantiates this form class.
-    return new static(
-      $container->get('config.factory'),
-      $container->get('current_user'),
-      $container->get('http_client')
-    );
+    $this->routeMatch = $routeMatch;
+    $this->pathMatcher = $pathMatcher;
+    $this->siteimproveDomainManager = $siteimproveDomainManager;
+    $this->logger = $loggerChannelFactory->get('Siteimprove');
   }
 
   /**
@@ -85,7 +128,7 @@ class SiteimproveUtils {
       }
     }
     catch (\Exception $e) {
-      watchdog_exception('siteimprove', $e, $this->t('There was an error requesting a new token.'));
+      $this->logger->log(RfcLogLevel::ERROR, 'There was an error requesting a new token. %type: @message in %function (line %line of %file).', Error::decodeException($e));
     }
 
     return FALSE;
@@ -146,7 +189,7 @@ class SiteimproveUtils {
    *
    * @throws \Drupal\Core\Entity\EntityMalformedException
    */
-  public function setSessionUrl($entity) {
+  public function setSessionUrl(?EntityInterface $entity) {
     // Check if user has access.
     if ($this->currentUser->hasPermission('use siteimprove')) {
       $urls = $this->getEntityUrls($entity);
@@ -169,8 +212,9 @@ class SiteimproveUtils {
    *
    * @throws \Drupal\Core\Entity\EntityMalformedException
    */
-  public function getEntityUrls($entity) {
-    if (!$entity->hasLinkTemplate('canonical')) {
+  public function getEntityUrls(?EntityInterface $entity) {
+
+    if (is_null($entity) || !$entity->hasLinkTemplate('canonical')) {
       return [];
     }
 
@@ -186,7 +230,7 @@ class SiteimproveUtils {
     }
 
     $frontpage = $this->configFactory->get('system.site')->get('page.front');
-    $current_route_name = \Drupal::routeMatch()->getRouteName();
+    $current_route_name = $this->routeMatch->getRouteName();
     $node_route = in_array($current_route_name, [
       'entity.node.edit_form',
       'entity.node.latest_version',
@@ -197,9 +241,9 @@ class SiteimproveUtils {
     ]);
 
     // If entity is frontpage, add base url to domains.
-    if (\Drupal::service('path.matcher')->isFrontPage()
-      || ($node_route && '/node/' . $entity->id() === $frontpage)
+    if (($node_route && '/node/' . $entity->id() === $frontpage)
       || ($taxonomy_route && '/taxonomy/term/' . $entity->id() === $frontpage)
+      || $this->pathMatcher->isFrontPage()
     ) {
       $front = Url::fromRoute('<front>')->toString();
       foreach ($domains as $domain) {
@@ -214,19 +258,17 @@ class SiteimproveUtils {
   /**
    * Get active domain names for entity.
    *
-   * @param \Drupal\Core\Entity\EntityInterface|null $entity
+   * @param \Drupal\Core\Entity\EntityInterface $entity
    *   Entity to get domain names for.
    *
    * @return array
    *   Array of domain names without trailing slash.
    */
-  public function getEntityDomains($entity) {
+  public function getEntityDomains(EntityInterface $entity) {
     // Get the active frontend domain plugin.
-    $config = \Drupal::service('config.factory')->get('siteimprove.settings');
-    $plugin_manager = \Drupal::getContainer()->get('plugin.manager.siteimprove_domain');
-    $plugin_id = $config->get('domain_plugin_id');
+    $config = $this->configFactory->get('siteimprove.settings');
     /** @var \Drupal\siteimprove\Plugin\SiteimproveDomainBase $plugin */
-    $plugin = $plugin_manager->createInstance($plugin_id);
+    $plugin = $this->siteimproveDomainManager->createInstance($config->get('domain_plugin_id'));
 
     // Get active domains.
     return $plugin->getUrls($entity);

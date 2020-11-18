@@ -9,3 +9,16 @@ siteimprove.overlay:
   js:
     https://cdn.siteimprove.net/cms/overlay.js:
       type: external
+siteimprove.prepublish:
+  version: VERSION
+  css:
+    theme:
+      css/siteimprove.prepublish.css: {}
+siteimprove.settings:
+  css:
+    theme:
+      css/siteimprove.settings.css: {}
+siteimprove.toolbar:
+  css:
+    theme:
+      css/siteimprove.toolbar.css: {}
