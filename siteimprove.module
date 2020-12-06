@@ -22,6 +22,12 @@ function siteimprove_toolbar() {
   $node = \Drupal::routeMatch()->getParameter('node');
   $taxonomy = \Drupal::routeMatch()->getParameter('taxonomy_term');
   $bundle = '';
+
+  //In event node parameter is not a node object.
+  if (is_string($node)) {
+    $node = \Drupal::entityTypeManager()->getStorage('node')->load($node);
+  }
+
   $urls = \Drupal::service('siteimprove.utils')->getEntityUrls($node ? $node : $taxonomy);
   $toolbar_items = [];
   $toolbar = [];
