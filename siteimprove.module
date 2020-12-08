@@ -28,6 +28,11 @@ function siteimprove_toolbar() {
     $node = \Drupal::entityTypeManager()->getStorage('node')->load($node);
   }
 
+  // In event taxonomy parameter is not an Term object.
+  if (is_string($taxonomy)) {
+    $taxonomy = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($taxonomy);
+  }
+
   $urls = \Drupal::service('siteimprove.utils')->getEntityUrls($node ? $node : $taxonomy);
   $toolbar_items = [];
   $toolbar = [];
