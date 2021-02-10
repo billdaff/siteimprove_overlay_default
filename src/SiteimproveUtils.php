@@ -207,7 +207,7 @@ class SiteimproveUtils {
    * @param \Drupal\Core\Entity\EntityInterface|null $entity
    *   Entity to get frontend urls for.
    *
-   * @return array|\Drupal\Core\GeneratedUrl|string
+   * @return array
    *   Returns an array of frontend urls for entity.
    *
    * @throws \Drupal\Core\Entity\EntityMalformedException
@@ -221,12 +221,12 @@ class SiteimproveUtils {
     $domains = $this->getEntityDomains($entity);
 
     /** @var \Drupal\Core\Entity\Entity $entity */
-    $url_relative = $entity->toUrl('canonical', ['absolute' => FALSE])->toString();
+    $url_relative = $entity->toUrl('canonical', ['absolute' => FALSE])->toString(TRUE);
     $urls = [];
 
     // Create urls for active frontend urls for the entity.
     foreach ($domains as $domain) {
-      $urls[] = $domain . $url_relative;
+      $urls[] = $domain . $url_relative->getGeneratedUrl();
     }
 
     $frontpage = $this->configFactory->get('system.site')->get('page.front');
@@ -245,9 +245,9 @@ class SiteimproveUtils {
       || ($taxonomy_route && '/taxonomy/term/' . $entity->id() === $frontpage)
       || $this->pathMatcher->isFrontPage()
     ) {
-      $front = Url::fromRoute('<front>')->toString();
+      $front = Url::fromRoute('<front>')->toString(TRUE);
       foreach ($domains as $domain) {
-        $urls[] = $domain . $front;
+        $urls[] = $domain . $front->getGeneratedUrl();
       }
     }
 
