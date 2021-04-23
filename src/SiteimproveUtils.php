@@ -23,7 +23,7 @@ class SiteimproveUtils {
 
   use StringTranslationTrait;
 
-  const TOKEN_REQUEST_URL = 'https://my2.siteimprove.com/auth/token?cms=Drupal-' . \Drupal::VERSION;
+  const TOKEN_REQUEST_URL = 'https://my2.siteimprove.com/auth/token';
 
   /**
    * Current user service.
@@ -110,7 +110,7 @@ class SiteimproveUtils {
 
     try {
       // Request new token.
-      $response = $this->httpClient->get(self::TOKEN_REQUEST_URL,
+      $response = $this->httpClient->get(self::getTokenRequestUrl(),
         ['headers' => ['Accept' => 'application/json']]);
 
       $data = (string) $response->getBody();
@@ -133,6 +133,16 @@ class SiteimproveUtils {
 
     return FALSE;
   }
+
+   /**
+    * Prepare the token request URL.
+    *
+    * @return string
+    *   The prepared token request URL.
+    */
+   public static function getTokenRequestUrl() {
+     return self::TOKEN_REQUEST_URL . '?cms=Drupal-' . \Drupal::VERSION;
+   }
 
   /**
    * Return Siteimprove js library.
