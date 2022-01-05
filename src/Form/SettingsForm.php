@@ -302,7 +302,20 @@ class SettingsForm extends ConfigFormBase {
       '#title' => $this->t('Select prepublish check enabled taxonomies'),
       '#description' => $this->t('Select which taxonomies Siteimprove Prepublish check is enabled for'),
     ];
+    $form['overlay'] = [
+      '#title' => $this->t('Siteimprove Overlay'),
+      '#type' => 'fieldset',
+    ];
 
+    $form['overlay']['description'] = [
+      '#markup' => "<p>" . $this->t("Siteimprove overlay settings.") . "</p>",
+    ];
+
+    $form['overlay']['overlay_default_collapse'] = [
+      '#title' => $this->t('Collapse overlay by default'),
+      '#type' => 'checkbox',
+      '#default_value' => $config->get('overlay_default_collapse'),
+    ];
     // Invalidate siteimprove_toolbar cache tag to ensure that the toolbar's
     // cache is properly invalidated.
     Cache::invalidateTags(['siteimprove_toolbar']);
@@ -376,6 +389,7 @@ class SettingsForm extends ConfigFormBase {
       ->set('token', $form_state->getValue('token'))
       ->set('domain_plugin_id', $domain_plugin)
       ->set('prepublish_enabled', $form_state->getValue('prepublish_enabled'))
+      ->set('overlay_default_collapse', $form_state->getValue('overlay_default_collapse'))
       ->set('api_username', $form_state->getValue('api_username'))
       ->set('api_key', $form_state->getValue('api_key'))
       ->set('enabled_content_types', $form_state->getValue('enabled_content_types'))

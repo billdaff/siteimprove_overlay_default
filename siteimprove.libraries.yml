@@ -3,6 +3,7 @@ siteimprove:
     js/siteimprove.js: {}
   dependencies:
     - core/jquery
+    - core/jquery.cookie
 siteimprove.overlay:
   license:
     name: GPL-2.0+

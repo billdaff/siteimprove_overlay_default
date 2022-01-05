@@ -10,7 +10,6 @@
   if (typeof NodeList !== 'undefined' && NodeList.prototype && !NodeList.prototype.forEach) {
     NodeList.prototype.forEach = Array.prototype.forEach;
   }
-
   var siteimprove = {
     input: function () {
       this.url = drupalSettings.siteimprove.input.url;
@@ -174,7 +173,14 @@
         }
 
       });
-
+      // We want to check if we are using the config
+      // If not we want to check if the cookie is already set
+      // If it doesnt exist we set to '6' to collapse.
+      if (drupalSettings.siteimprove.overlay_default_collapse){
+        if($.cookie('sicmsplugin') == undefined){
+          $.cookie('sicmsplugin', '6', { domain: document.domain });
+        }
+      }
     }
   };
 

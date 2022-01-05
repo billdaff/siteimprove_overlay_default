@@ -51,8 +51,7 @@ function siteimprove_toolbar() {
   $prepublish_access = $user->hasPermission('use siteimprove prepublish');
   $prepublish_available = FALSE;
   $config = \Drupal::service('config.factory')->get('siteimprove.settings');
-  $prepublish_enabled = $config->get('prepublish_enabled');
-  $enabled_content_types = $config->get('enabled_content_types');
+  $prepublish_enabled = $config->get('prepublish_enabled');$enabled_content_types = $config->get('enabled_content_types');
   $enabled_taxonomies = $config->get('enabled_taxonomies');
   $enabled_route_names = [
     'entity.node.canonical',
@@ -61,7 +60,9 @@ function siteimprove_toolbar() {
     'entity.taxonomy_term.latest_version',
   ];
   $current_route_name = \Drupal::routeMatch()->getRouteName();
-
+  // Set overlay collapse value for js  
+  $toolbar_items['siteimprove_toolbar']['tray']['#attached']['drupalSettings']['siteimprove']['overlay_default_collapse'] = $config->get('overlay_default_collapse');;
+  
   // Prepublish should be available for an enabled taxonomy or content type.
   if ($prepublish_enabled && in_array($current_route_name, $enabled_route_names) && (($node && $enabled_content_types[$bundle]) || ($taxonomy && $enabled_taxonomies[$bundle]))) {
     $prepublish_available = TRUE;
